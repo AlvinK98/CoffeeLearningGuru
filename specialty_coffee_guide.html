@@ -95,22 +95,42 @@
     .ticker-group svg { flex:none; }
     @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-50%); } }
     @media (prefers-reduced-motion: reduce) { .ticker-track { animation:none; } }
+    .wordmark-head { font-size:clamp(28px,6vw,46px); line-height:1; white-space:nowrap; }
+    .nav-pills { --ph:36px; --ov:14px; --px:11px; position:relative; flex:none; width:122px; height:var(--ph); margin-inline:auto; z-index:60; }
+    @media (min-width:640px){ .nav-pills { --ph:40px; --ov:16px; --px:14px; width:142px; } }
+    .nav-pills-inner { position:absolute; left:0; top:0; display:flex; align-items:center; }
+    .nav-tab { position:relative; height:var(--ph); display:flex; align-items:center; border:0; border-radius:9999px; padding:0 var(--px); color:#fff; font-weight:700; font-size:14px; white-space:nowrap; cursor:pointer; transition:filter .15s ease; }
+    .nav-tab + .nav-tab { margin-left:calc(-1 * var(--ov)); padding-left:calc(var(--px) + var(--ov)); }
+    #tab-btn-origin { background:#e0aaee; z-index:3; }
+    #tab-btn-roast { background:#c96bdc; z-index:2; }
+    #tab-btn-brew { background:#8b4dff; z-index:1; }
+    .nav-tab:hover { filter:brightness(1.06); }
+    .nav-tab.is-active { box-shadow:0 0 0 2px #000; }
+    .nav-tab:focus-visible { outline:2px solid #000; outline-offset:2px; }
+    .nav-tab .nav-label { display:inline-block; overflow:hidden; max-width:0; opacity:0; margin-left:0; transition:max-width .25s ease, opacity .2s ease, margin-left .25s ease; }
+    .nav-tab:hover .nav-label, .nav-tab:focus-visible .nav-label { max-width:15rem; opacity:1; margin-left:.4rem; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans antialiased selection:bg-terracotta-500 selection:text-white">
 
-  <!-- Top Navigation + Hero -->
+  <!-- Top Navigation (title lives in the header; tabs minimised to 1 / 2 / 3) -->
   <header class="sticky top-0 z-40 band-terracotta border-b-2 border-black">
-    <div class="px-3 sm:px-6 lg:px-10 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5">
-      <nav aria-label="Primary Sections" class="order-2 sm:order-1 w-full sm:w-auto flex items-stretch gap-2">
-        <button id="tab-btn-origin" onclick="switchSection('origin')" class="nav-tab flex-1 sm:flex-none px-3 sm:px-5 py-2.5 text-[11px] sm:text-sm font-bold uppercase leading-tight text-center border-2 border-black transition bg-black text-white"><span>Origin Map &amp; Passport</span></button>
-        <button id="tab-btn-roast" onclick="switchSection('roast')" class="nav-tab flex-1 sm:flex-none px-3 sm:px-5 py-2.5 text-[11px] sm:text-sm font-bold uppercase leading-tight text-center border-2 border-black transition bg-transparent text-black hover:bg-white"><span>Fermentation &amp; Roasting</span></button>
-        <button id="tab-btn-brew" onclick="switchSection('brew')" class="nav-tab flex-1 sm:flex-none px-3 sm:px-5 py-2.5 text-[11px] sm:text-sm font-bold uppercase leading-tight text-center border-2 border-black transition bg-transparent text-black hover:bg-white"><span>Brewing Lab &amp; Timer</span></button>
+    <div class="px-3 sm:px-6 lg:px-10 py-2 flex items-center gap-2 sm:gap-4">
+      <div class="shrink-0 min-w-0">
+        <h1 class="wordmark wordmark-head">Cherry to Cup</h1>
+      </div>
+      <p class="hidden xl:block text-xs font-bold uppercase leading-tight max-w-[16rem]">Specialty Coffee Atlas, Fermentation &amp; Brewing Lab</p>
+      <nav aria-label="Primary Sections" class="nav-pills">
+        <div class="nav-pills-inner">
+          <button id="tab-btn-origin" onclick="switchSection('origin')" aria-label="Origin Map &amp; Passport" class="nav-tab is-active"><span>1.</span><span class="nav-label">Origin Map &amp; Passport</span></button>
+          <button id="tab-btn-roast" onclick="switchSection('roast')" aria-label="Fermentation &amp; Roasting" class="nav-tab"><span>2.</span><span class="nav-label">Fermentation &amp; Roasting</span></button>
+          <button id="tab-btn-brew" onclick="switchSection('brew')" aria-label="Brewing Lab &amp; Timer" class="nav-tab"><span>3.</span><span class="nav-label">Brewing Lab &amp; Timer</span></button>
+        </div>
       </nav>
-      <div class="order-1 sm:order-2 ml-auto sm:ml-0 shrink-0 flex items-center gap-2">
-        <div class="px-3 py-2 rounded-full border-2 border-black band-sunshine text-xs font-bold whitespace-nowrap"><span id="mobile-bean-counter">0</span> Beans</div>
+      <div class="shrink-0 flex items-center gap-1.5 sm:gap-2">
+        <div class="hidden min-[420px]:block px-2 sm:px-3 py-1.5 rounded-full border-2 border-black band-sunshine text-xs font-bold whitespace-nowrap"><span id="mobile-bean-counter">0</span><span class="hidden sm:inline"> Beans</span><span class="sm:hidden"> 🫘</span></div>
         <label for="lang-select" class="sr-only">Language</label>
-        <select id="lang-select" onchange="setLanguage(this.value)" title="Language" class="appearance-none bg-white border-2 border-black text-black px-3 py-2 text-xs font-bold text-center focus:outline-none cursor-pointer">
+        <select id="lang-select" onchange="setLanguage(this.value)" title="Language" class="appearance-none bg-white border-2 border-black text-black px-1.5 sm:px-3 py-1.5 text-xs font-bold text-center focus:outline-none cursor-pointer">
           <option value="en">🌐 Eng</option>
           <option value="zh-CN">🌐 简中</option>
           <option value="zh-TW">🌐 繁中</option>
@@ -118,10 +138,6 @@
       </div>
     </div>
   </header>
-  <div class="band-terracotta px-4 sm:px-10 pt-8 pb-12 sm:pb-16 text-center">
-    <h1 class="wordmark">Cherry to Cup</h1>
-    <p class="mt-4 text-[19px] sm:text-xl font-bold uppercase">Specialty Coffee Atlas, Fermentation &amp; Brewing Lab</p>
-  </div>
 
   <!-- Main Content Container -->
   <main class="flex-1 w-full">
@@ -1228,15 +1244,8 @@
       ["origin", "roast", "brew"].forEach(key => {
         const sec = document.getElementById(`section-${key}`);
         const btn = document.getElementById(`tab-btn-${key}`);
-        if (key === sectionKey) {
-          sec.classList.remove("hidden");
-          btn.classList.add("bg-black", "text-white");
-          btn.classList.remove("bg-transparent", "text-black", "hover:bg-white");
-        } else {
-          sec.classList.add("hidden");
-          btn.classList.remove("bg-black", "text-white");
-          btn.classList.add("bg-transparent", "text-black", "hover:bg-white");
-        }
+        sec.classList.toggle("hidden", key !== sectionKey);
+        btn.classList.toggle("is-active", key === sectionKey);
       });
     }
 
