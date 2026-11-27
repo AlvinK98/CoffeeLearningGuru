@@ -47,6 +47,8 @@
     html[lang="zh-CN"] body, html[lang="zh-CN"] .font-sans, html[lang="zh-CN"] .font-display { font-family: "Space Mono", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; }
     @keyframes pourgrow { from { width: var(--from); } to { width: var(--to); } }
     @keyframes runlight { from { background-position: 0 0; } to { background-position: 40px 0; } }
+    .pour-fill { position:absolute; top:0; bottom:0; left:0; z-index:0; box-sizing:border-box; border:2px solid #9f4920; border-radius:20px; background:rgba(159,73,32,.4); }
+    .pour-fill.pour-fill-grow { animation:pourgrow 1s linear forwards; }
     .pour-bar-run { background-image: linear-gradient(90deg, #9f4920 0%, #fff78f 50%, #9f4920 100%); background-size: 40px 100%; animation: runlight 1s linear infinite; box-shadow: 0 0 8px rgba(255,247,143,.7); }
     .pour-bar-run.pour-bar-grow { animation: pourgrow 1s linear forwards, runlight 1s linear infinite; }
 
@@ -2384,7 +2386,7 @@ function showOtherCountry(on) {
         const stepDur = nextStep ? nextStep.time - step.time : null;
         const stepElapsed = stepDur === null ? Math.max(0, secs - step.time) : Math.max(0, Math.min(stepDur, secs - step.time));
         const running = state.timerRunning && isCurrent;
-        const barClass = running ? "pour-bar-run" + (nextStep && pct < 100 ? " pour-bar-grow" : "") : "bg-gold-400";
+        const fillClass = "pour-fill" + (running && nextStep && pct < 100 ? " pour-fill-grow" : "");
 
 
         return `
@@ -2393,17 +2395,17 @@ function showOtherCountry(on) {
               ? "bg-terracotta-500/25 border-terracotta-500 text-white"
               : "bg-espresso-900/70 border-espresso-800 text-cream-200"
           }">
-            <div class="flex-1 min-w-0 p-3">
-              <div class="flex items-baseline justify-between gap-2">
-                <div class="flex items-baseline gap-2 font-bold min-w-0">
-                  <span class="font-mono text-xl text-gold-400">${escapeHtml(step.label.split(" — ")[0])}</span>
-                  <span class="text-sm">${escapeHtml(step.label.split(" — ").slice(1).join(" — "))}</span>
+            <div class="relative flex-1 min-w-0">
+              ${pct > 0 || running ? `<div class="${fillClass}" style="width:${pct}%;--from:${pct}%;--to:${pctNext}%"></div>` : ""}
+              <div class="relative z-10 flex items-center gap-3 p-3 sm:p-4 h-full">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline gap-2 font-bold">
+                    <span class="font-mono text-xl text-gold-400">${escapeHtml(step.label.split(" — ")[0])}</span>
+                    <span class="text-sm">${escapeHtml(step.label.split(" — ").slice(1).join(" — "))}</span>
+                  </div>
+                  <p class="text-[11px] text-cream-300/90 mt-1">${escapeHtml(step.note)}</p>
                 </div>
                 <span class="font-mono text-[11px] font-bold text-gold-400 whitespace-nowrap shrink-0">${formatClock(stepElapsed)}${stepDur !== null ? `<span class="opacity-60"> / ${formatClock(stepDur)}</span>` : ""}</span>
-              </div>
-              <p class="text-[11px] text-cream-300/90 mt-1">${escapeHtml(step.note)}</p>
-              <div class="mt-2 w-full h-2 rounded-full bg-espresso-800 overflow-hidden">
-                <div class="h-full rounded-full ${barClass}" style="width:${pct}%;--from:${pct}%;--to:${pctNext}%"></div>
               </div>
             </div>
             <div class="shrink-0 w-24 sm:w-28 flex items-baseline justify-center gap-1 px-3 self-stretch ${isCurrent ? "bg-terracotta-500/40" : "bg-espresso-800"} text-gold-400 font-mono font-extrabold" style="align-items:center">
